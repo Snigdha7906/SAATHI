@@ -52,20 +52,21 @@ class Predictions():
         height,width = frame.shape[0],frame.shape[1]
         shift_left = ["Lane present on left","Shift left"]
         shift_right = ["Lane present on right","Shift right"]
+        text=""
         if(deviation < 0):
             # means person on the right and lane on the left 
             # need to shift left 
             cv.putText(frame,shift_left[0],(40,40),5,1.1,(100,10,255),2)
             cv.putText(frame,shift_left[1],(40,70),5,1.1,(100,10,255),2)
-
-#             speak(shift_left)
+            text=text+shift_left[1]
+            # speak(shift_left)
         else:
             # person needs to shift right 
             cv.putText(frame,shift_right[0],(40,40),5,1.1,(100,255,10),2)
             cv.putText(frame,shift_right[1],(40,70),5,1.1,(100,255,10),2)
-
-#             speak(shift_right)
-        return frame
+            text=text+shift_right[1]
+            # speak(shift_right)
+        return frame, text
 
     def get_outputs(self,frame,points):
         '''Generates predictions for walking 
@@ -106,12 +107,12 @@ class Predictions():
         deviation = lane_mid - center_x
         deviation_text = "Deviation: "+str(np.round((deviation * 100/width),3)) + "%"
         cv.putText(frame,deviation_text,(int(lane_mid-60),int(height-width//(9.5))),1,1.3,(250,20,250),2)
-#         speak(deviation_text)
+        # speak(deviation_text)
         
         if(abs(deviation) >= shift_allowed):
             # large deviation : give shift outputs only 
-            frame = self.shifted_lane(frame,deviation)
-            return frame 
+            frame , text= self.shifted_lane(frame,deviation)
+            return frame, text
         else:
             # if deviation lesser then that means either correct path 
             # or a turn is approaching : text put at the center of the 
@@ -129,26 +130,27 @@ class Predictions():
             except:
                 left_perc = 50
                 right_perc = 50
+            text=""
             if(abs(left_perc - right_perc) < 25):
                 cv.putText(frame,correct[0],(40,40),5,1.1,(100,255,10),2)
                 cv.putText(frame,correct[1],(40,70),5,1.1,(100,255,10),2)
-
-#                 speak(correct)
+                text=text+correct[1]
+                # speak(correct)
             else:
                 if(left_perc > right_perc): # more than 25% relative change 
                     # means a approximately a right turn is approaching 
                     cv.putText(frame,right_turn[0],(40,40),5,1.1,(100,10,255),2)
                     cv.putText(frame,right_turn[1],(40,70),5,1.1,(100,10,255),2)
-
-#                     speak(right_turn)
+                    text=text+right_turn[1]
+                    # speak(right_turn)
                 else:
                     cv.putText(frame,left_turn[0],(40,40),5,1.1,(100,10,255),2)
                     cv.putText(frame,left_turn[1],(40,70),5,1.1,(100,10,255),2)
-
-#                     speak(left_turn)
+                    text=text+left_turn[1]
+                    # speak(left_turn)
             # return the frame with the outputs 
             # to-do : output with sound 
-            return frame 
+            return frame, text 
 
 
 
