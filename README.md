@@ -1,6 +1,7 @@
 # SAATHI
 This is a model that is aimed at providing lane assistance to visually impaired people  
- and providing them a sense of independence and control while walking through unknown environments. It also identifies the objects and gives output in form of speech.
+ and providing them a sense of independence and control while walking through unknown environments. 
+ It also identifies the objects and gives output in form of speech.
 
 The pipeline of the model used was 
 
